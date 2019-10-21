@@ -17,6 +17,9 @@ author: YOUR NAME HERE
 __version__ = 7
 def main(user_name):
     print_user_info(canvas_requests.get_user("hermione"))
+    filter_available_courses(canvas_requests.get_courses('hermione'))
+    print_course(filter_available_courses(canvas_requests.get_courses('hermione')))
+    get_course_ids(canvas_requests.get_courses('hermione'))
 
 # 1) main
 # 2) print_user_info
@@ -38,7 +41,22 @@ def filter_available_courses(course_list:[dict])->[dict]:
         if dictionary['workflow_state']=='available':
             new_list.append(dictionary)
     return new_list
-    #return dictionary.items()
+
+def print_course(course_list:[dict])->str:
+    for dictionary in course_list:
+        print(str(dictionary['id']) +' : ' + str(dictionary['name']))
+
+def get_course_ids(course_list:[dict])->[int]:
+    new_list=[]
+    for dictionary in course_list:
+        new_list.append(dictionary['id'])
+
+    return new_list
+"""You are here trying to figure out why the returns aten't showing even though printing shows it works"""
+
+
+
+
 # 3) filter_available_courses
 # 4) print_courses
 # 5) get_course_ids
@@ -57,3 +75,4 @@ if __name__ == "__main__":
 
     # https://community.canvaslms.com/docs/DOC-10806-4214724194
     # main('YOUR OWN CANVAS TOKEN (You know, if you want)')
+print(filter_available_courses(canvas_requests.get_courses('hermione')))
