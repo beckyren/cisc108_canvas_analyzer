@@ -20,6 +20,9 @@ def main(user_name):
     filter_available_courses(canvas_requests.get_courses('hermione'))
     print_course(filter_available_courses(canvas_requests.get_courses('hermione')))
     get_course_ids(canvas_requests.get_courses('hermione'))
+    choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
+    summarize_points(canvas_requests.get_submissions('hermione', 52))
+
 
 # 1) main
 # 2) print_user_info
@@ -52,7 +55,23 @@ def get_course_ids(course_list:[dict])->[int]:
         new_list.append(dictionary['id'])
 
     return new_list
-"""You are here trying to figure out why the returns aten't showing even though printing shows it works"""
+"""You are here trying to figure out why the returns aten't showing even though printing shows it works
+Skip this for now and try to get the other functions written"""
+def choose_course(course_list:[int])->int:
+    course=0
+    while int(course) not in course_list :
+        course=input("Hello user, please return one of your course IDs")
+        """Need to fix for when string is entered"""
+    return int(course)
+def summarize_points(submissions:[dict]):
+    points_possible=0
+    for dictionary in submissions:
+        points_possible += (dictionary['assignment']['points_possible']*dictionary['assignment']['group']['group_weight'])
+    print("Points possible so far: " + str(points_possible))
+
+
+
+
 
 
 
@@ -76,3 +95,5 @@ if __name__ == "__main__":
     # https://community.canvaslms.com/docs/DOC-10806-4214724194
     # main('YOUR OWN CANVAS TOKEN (You know, if you want)')
 print(filter_available_courses(canvas_requests.get_courses('hermione')))
+"""I think this is the reason why your thing is printinh put while every other function is not printing"""
+print(canvas_requests.get_submissions('hermione',52))
