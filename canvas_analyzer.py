@@ -20,7 +20,7 @@ def main(user_name):
     filter_available_courses(canvas_requests.get_courses('hermione'))
     print_course(filter_available_courses(canvas_requests.get_courses('hermione')))
     get_course_ids(canvas_requests.get_courses('hermione'))
-    choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
+    #choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
     summarize_points(canvas_requests.get_submissions('hermione', 52))
 
 
@@ -65,10 +65,21 @@ def choose_course(course_list:[int])->int:
     return int(course)
 def summarize_points(submissions:[dict]):
     points_possible=0
+    points_obtained=0
     for dictionary in submissions:
-        points_possible += (dictionary['assignment']['points_possible']*dictionary['assignment']['group']['group_weight'])
-    print("Points possible so far: " + str(points_possible))
+        points_possible += dictionary['assignment']['points_possible']*dictionary['assignment']['group']['group_weight']
+        if dictionary['score']!=None:
+            points_obtained += dictionary['score']*dictionary['assignment']['group']['group_weight']
+    print(points_possible)
+    print(points_obtained)
+    print(round((points_obtained/points_possible)*100))
 
+"""you can set a variable equal to a value but that value is used as a key"""
+'''set two dictionaries equal to each other see if changing onen chganges the other'''
+'''side eddects-modifying a list, etc
+Student=some dictionary with aformat
+other list is made following dictionary format can be used in a function that takes in a student dictionaty'''
+'''is type dictionary [student] or{student}'''
 
 
 
