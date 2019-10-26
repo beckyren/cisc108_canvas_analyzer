@@ -1,4 +1,6 @@
 import canvas_requests
+
+
 """
 Project 4C
 Canvas Analyzer
@@ -11,8 +13,9 @@ Edit this file to implement the project.
 To test your current solution, run the `test_my_solution.py` file.
 Refer to the instructions on Canvas for more information.
 
-"I have neither given nor received help on this assignment."
-author: YOUR NAME HERE
+"I have neither given nor received help on this assignment(except from Dr. Bart who has been patient thus far with
+every little things I've asked help on."
+author: Becky Ren
 """
 __version__ = 7
 def main(user_name):
@@ -22,6 +25,8 @@ def main(user_name):
     get_course_ids(canvas_requests.get_courses('hermione'))
     #choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
     summarize_points(canvas_requests.get_submissions('hermione', 52))
+    summarize_groups(canvas_requests.get_submissions('hermione',52))
+    plot_scores(canvas_requests.get_submissions('hermione',52))
 
 
 # 1) main
@@ -67,12 +72,65 @@ def summarize_points(submissions:[dict]):
     points_possible=0
     points_obtained=0
     for dictionary in submissions:
-        points_possible += dictionary['assignment']['points_possible']*dictionary['assignment']['group']['group_weight']
         if dictionary['score']!=None:
             points_obtained += dictionary['score']*dictionary['assignment']['group']['group_weight']
-    print(points_possible)
-    print(points_obtained)
-    print(round((points_obtained/points_possible)*100))
+            points_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                'group_weight']
+    print("Points possible so far: "+str(points_possible))
+    print("Points obtained: "+str(points_obtained))
+    print("Current grade: "+str(round((points_obtained/points_possible)*100)))
+
+def summarize_groups(submissions:[dict]):
+    group1=0
+    group2=0
+    group3=0
+    group4=0
+    points_possible=0
+    points_obtained=0
+    points2_obtained=0
+    points2_possible=0
+    points3_obtained=0
+    points3_possible=0
+    points4_obtained=0
+    points4_possible=0
+    for dictionary in submissions:
+        if dictionary['assignment']['group']['name'] == "Class Activities":
+            if dictionary['score'] != None:
+                points_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
+                points_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+                group1 = round((points_obtained / points_possible) * 100)
+        if dictionary['assignment']['group']['name'] == "Discussion Forums":
+            if dictionary['score'] != None:
+                points2_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
+                points2_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+                group2 = round((points2_obtained/points2_possible) * 100)
+        if dictionary['assignment']['group']['name'] == "Learning Quizzes":
+            if dictionary['score'] != None:
+                points3_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
+                points3_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+                group3 = round((points3_obtained / points3_possible) * 100)
+        if dictionary['assignment']['group']['name'] == "Programming Problems":
+            if dictionary['score'] != None:
+                points4_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
+                points4_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+                group4 = round((points4_obtained/points4_possible) * 100)
+    print(group1)
+    print(group2)
+    print(group3)
+    print(group4)
+def plot_scores(submissions:[dict]):
+    points=0
+    new_list=[]
+    for dictionary in submissions:
+        if dictionary['score'] != None and dictionary['assignment']['points_possible']:
+            points= round((dictionary['score']*100)/dictionary['assignment']['points_possible'],2)
+            new_list.append(points)
+
+    print (new_list)
 
 """you can set a variable equal to a value but that value is used as a key"""
 '''set two dictionaries equal to each other see if changing onen chganges the other'''
