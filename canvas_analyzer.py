@@ -1,4 +1,6 @@
 import canvas_requests
+import datetime
+
 
 
 """
@@ -13,20 +15,20 @@ Edit this file to implement the project.
 To test your current solution, run the `test_my_solution.py` file.
 Refer to the instructions on Canvas for more information.
 
-"I have neither given nor received help on this assignment(except from Dr. Bart who has been patient thus far with
-every little things I've asked help on."
+"I have neither given nor received help on this assignment(except from the person who made this rule)."
 author: Becky Ren
 """
 __version__ = 7
 def main(user_name):
     print_user_info(canvas_requests.get_user("hermione"))
     filter_available_courses(canvas_requests.get_courses('hermione'))
-    print_course(filter_available_courses(canvas_requests.get_courses('hermione')))
+    print_courses(filter_available_courses(canvas_requests.get_courses('hermione')))
     get_course_ids(canvas_requests.get_courses('hermione'))
-    #choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
+    choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
     summarize_points(canvas_requests.get_submissions('hermione', 52))
     summarize_groups(canvas_requests.get_submissions('hermione',52))
     plot_scores(canvas_requests.get_submissions('hermione',52))
+    plot_grade_trends(canvas_requests.get_submissions('hermione',52))
 
 
 # 1) main
@@ -50,7 +52,7 @@ def filter_available_courses(course_list:[dict])->[dict]:
             new_list.append(dictionary)
     return new_list
 
-def print_course(course_list:[dict])->str:
+def print_courses(course_list:[dict])->str:
     for dictionary in course_list:
         print(str(dictionary['id']) +' : ' + str(dictionary['name']))
 
@@ -71,14 +73,17 @@ def choose_course(course_list:[int])->int:
 def summarize_points(submissions:[dict]):
     points_possible=0
     points_obtained=0
+    points_for_all=0
     for dictionary in submissions:
         if dictionary['score']!=None:
             points_obtained += dictionary['score']*dictionary['assignment']['group']['group_weight']
             points_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
                 'group_weight']
+
     print("Points possible so far: "+str(points_possible))
     print("Points obtained: "+str(points_obtained))
     print("Current grade: "+str(round((points_obtained/points_possible)*100)))
+
 
 def summarize_groups(submissions:[dict]):
     group1=0
@@ -129,8 +134,55 @@ def plot_scores(submissions:[dict]):
         if dictionary['score'] != None and dictionary['assignment']['points_possible']:
             points= round((dictionary['score']*100)/dictionary['assignment']['points_possible'],2)
             new_list.append(points)
-
     print (new_list)
+
+
+
+def plot_grade_trends(submissions:[dict]):
+    '''a_string_date = "2017-08-30T16:20:00Z"
+    due_at = datetime.datetime.strptime(a_string_date, "%Y-%m-%dT%H:%M:%SZ")'''
+    total_points=0
+    points_obtained=0
+    points2_obtained=0
+    points3_obtained=0
+    empty_list = []
+    list1=[]
+    list2=[]
+    list3=[]
+    for dictionary in submissions:
+        total_points += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+            'group_weight']
+        a_string_date=dictionary['assignment']['due_at']
+        due_at= datetime.datetime.strptime(a_string_date, "%Y-%m-%dT%H:%M:%SZ")
+        empty_list.append(str(due_at))#might need to exclude str in actual graphing
+    #for calculating the lists of scores, you are keeping a running total for the percentage of the grades so far
+    #score*weight gives the numberator but you need total points from both graded and ungraded assignments
+    for dictionary in submissions:
+        points3_obtained+=dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+        list3.append(round((points3_obtained/total_points)*100,2))
+        if dictionary['score']!=None:
+            points_obtained+=dictionary['score'] * dictionary['assignment']['group']['group_weight']
+            points2_obtained+=dictionary['score'] * dictionary['assignment']['group']['group_weight']
+            list1.append(round((points_obtained/total_points)*100,2))
+            list2.append(round((points2_obtained/total_points)*100,2))
+
+
+        else:
+            points_obtained+=dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                    'group_weight']
+            points2_obtained+=0
+            list1.append((round((points_obtained/total_points)*100,2)))
+            list2.append(round((points2_obtained/total_points)*100,2))
+
+
+
+    print(list1)
+    print(list2)
+    print(list3)
+
+
+
 
 """you can set a variable equal to a value but that value is used as a key"""
 '''set two dictionaries equal to each other see if changing onen chganges the other'''
@@ -163,6 +215,6 @@ if __name__ == "__main__":
 
     # https://community.canvaslms.com/docs/DOC-10806-4214724194
     # main('YOUR OWN CANVAS TOKEN (You know, if you want)')
-print(filter_available_courses(canvas_requests.get_courses('hermione')))
-"""I think this is the reason why your thing is printinh put while every other function is not printing"""
-print(canvas_requests.get_submissions('hermione',52))
+
+
+
