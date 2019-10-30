@@ -1,9 +1,6 @@
 import canvas_requests
 import datetime
 import matplotlib.pyplot as plt
-import numpy as np
-
-
 """
 Project 4C
 Canvas Analyzer
@@ -12,11 +9,7 @@ Fall 2019
 
 Access the Canvas Learning Management System and process learning analytics.
 
-Edit this file to implement the project.
-To test your current solution, run the `test_my_solution.py` file.
-Refer to the instructions on Canvas for more information.
-
-"I have neither given nor received help on this assignment(except from the person who made this rule)."
+"I have neither given nor received help on this assignment(except from the person who made me take this pledge)."
 author: Becky Ren
 """
 __version__ = 7
@@ -30,24 +23,8 @@ def main(user_name):
     summarize_groups(canvas_requests.get_submissions(user_name,thing))
     plot_scores(canvas_requests.get_submissions(user_name,thing))
     plot_grade_trends(canvas_requests.get_submissions(user_name,thing))
-'''3) filter_available_courses
-# 4) print_courses
-# 5) get_course_ids
-# 6) choose_course
-# 7) summarize_points
-# 8) summarize_groups
-# 9) plot_scores
-# 10) plot_grade_trends'''
 
-# 1) main
-# 2) print_user_info
 def print_user_info(a_dict):
-    string_I_need="{'lti_user_id': None, 'sis_user_id': None, 'avatar_url': " \
-                  "'https://i.imgur.com/gaNCiuW.png', 'calendar': None, 'login_id': " \
-                  "'hgranger@hogwarts.edu', 'locale': None, 'title': 'Student', 'short_name': 'Hermione Granger', " \
-                  "'time_zone': 'Europe/London', 'name': 'Hermione Granger', 'id': 42, 'primary_email': 'hgranger@hogwarts.edu'," \
-                  " 'bio': 'Interested in Magic, Learning, and House Elf Rights', 'sortable_name': 'granger, hermione'}"
-
     print ("Name: "+ a_dict['short_name']+"\n"
            "Title: "+a_dict['title']+"\n"
            "Primary Email: "+a_dict['login_id']+"\n"
@@ -143,9 +120,7 @@ def plot_grade_trends(submissions:[dict]):
             'group_weight']
         a_string_date=dictionary['assignment']['due_at']
         due_at= datetime.datetime.strptime(a_string_date, "%Y-%m-%dT%H:%M:%SZ")
-        empty_list.append(due_at)#might need to exclude str in actual graphing
-    #for calculating the lists of scores, you are keeping a running total for the percentage of the grades so far
-    #score*weight gives the numberator but you need total points from both graded and ungraded assignments
+        empty_list.append(due_at)
     for dictionary in submissions:
         points3_obtained+=dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
                     'group_weight']
@@ -172,20 +147,6 @@ def plot_grade_trends(submissions:[dict]):
     plt.plot(empty_list, list3, label="Maximum")
     plt.legend()
     plt.show()
-    '''print(empty_list)
-    print(list1)
-    print(list2)
-    print(list3)'''
-
-
-
-
-"""you can set a variable equal to a value but that value is used as a key"""
-'''set two dictionaries equal to each other see if changing onen chganges the other'''
-'''side eddects-modifying a list, etc
-Student=some dictionary with aformat
-other list is made following dictionary format can be used in a function that takes in a student dictionaty'''
-'''is type dictionary [student] or{student}'''
 
 
 
@@ -193,17 +154,7 @@ other list is made following dictionary format can be used in a function that ta
 
 
 
-# 3) filter_available_courses
-# 4) print_courses
-# 5) get_course_ids
-# 6) choose_course
-# 7) summarize_points
-# 8) summarize_groups
-# 9) plot_scores
-# 10) plot_grade_trends
 
-# Keep any function tests inside this IF statement to ensure
-# that your `test_my_solution.py` does not execute it.
 if __name__ == "__main__":
     main('hermione')
     #main('ron')
