@@ -27,6 +27,7 @@ import copy
 from datetime import datetime, timedelta
 import types
 
+
 #%% Top-level constants
 
 # Settings
@@ -108,7 +109,8 @@ class MockPlt:
                     scatter=self.scatter, show=self.show,
                     xlabel=self.xlabel, ylabel=self.ylabel, 
                     title=self.title, legend=self.legend,
-                    xticks=dummy, yticks=dummy,
+                    xticks=dummy,
+                    yticks=dummy,
                     autoscale=dummy, axhline=dummy,
                     axhspan=dummy, axvline=dummy,
                     axvspan=dummy, clf=dummy,

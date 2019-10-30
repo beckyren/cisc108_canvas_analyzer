@@ -1,6 +1,7 @@
 import canvas_requests
 import datetime
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 """
@@ -20,16 +21,23 @@ author: Becky Ren
 """
 __version__ = 7
 def main(user_name):
-    print_user_info(canvas_requests.get_user("hermione"))
-    filter_available_courses(canvas_requests.get_courses('hermione'))
-    print_courses(filter_available_courses(canvas_requests.get_courses('hermione')))
-    get_course_ids(canvas_requests.get_courses('hermione'))
-    choose_course(get_course_ids(canvas_requests.get_courses('hermione')))
-    summarize_points(canvas_requests.get_submissions('hermione', 52))
-    summarize_groups(canvas_requests.get_submissions('hermione',52))
-    plot_scores(canvas_requests.get_submissions('hermione',52))
-    plot_grade_trends(canvas_requests.get_submissions('hermione',52))
-
+    print_user_info(canvas_requests.get_user(user_name))
+    filter_available_courses(canvas_requests.get_courses(user_name))
+    print_courses(filter_available_courses(canvas_requests.get_courses(user_name)))
+    get_course_ids(canvas_requests.get_courses(user_name))
+    thing=choose_course(get_course_ids(canvas_requests.get_courses(user_name)))
+    summarize_points(canvas_requests.get_submissions(user_name,thing ))
+    summarize_groups(canvas_requests.get_submissions(user_name,thing))
+    plot_scores(canvas_requests.get_submissions(user_name,thing))
+    plot_grade_trends(canvas_requests.get_submissions(user_name,thing))
+'''3) filter_available_courses
+# 4) print_courses
+# 5) get_course_ids
+# 6) choose_course
+# 7) summarize_points
+# 8) summarize_groups
+# 9) plot_scores
+# 10) plot_grade_trends'''
 
 # 1) main
 # 2) print_user_info
@@ -73,7 +81,6 @@ def choose_course(course_list:[int])->int:
 def summarize_points(submissions:[dict]):
     points_possible=0
     points_obtained=0
-    points_for_all=0
     for dictionary in submissions:
         if dictionary['score']!=None:
             points_obtained += dictionary['score']*dictionary['assignment']['group']['group_weight']
@@ -86,47 +93,23 @@ def summarize_points(submissions:[dict]):
 
 
 def summarize_groups(submissions:[dict]):
-    group1=0
-    group2=0
-    group3=0
-    group4=0
-    points_possible=0
-    points_obtained=0
-    points2_obtained=0
-    points2_possible=0
-    points3_obtained=0
-    points3_possible=0
-    points4_obtained=0
-    points4_possible=0
-    for dictionary in submissions:
-        if dictionary['assignment']['group']['name'] == "Class Activities":
-            if dictionary['score'] != None:
-                points_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
-                points_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
-                    'group_weight']
-                group1 = round((points_obtained / points_possible) * 100)
-        if dictionary['assignment']['group']['name'] == "Discussion Forums":
-            if dictionary['score'] != None:
-                points2_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
-                points2_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
-                    'group_weight']
-                group2 = round((points2_obtained/points2_possible) * 100)
-        if dictionary['assignment']['group']['name'] == "Learning Quizzes":
-            if dictionary['score'] != None:
-                points3_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
-                points3_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
-                    'group_weight']
-                group3 = round((points3_obtained / points3_possible) * 100)
-        if dictionary['assignment']['group']['name'] == "Programming Problems":
-            if dictionary['score'] != None:
-                points4_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
-                points4_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
-                    'group_weight']
-                group4 = round((points4_obtained/points4_possible) * 100)
-    print(group1)
-    print(group2)
-    print(group3)
-    print(group4)
+    thing=["Lab","Practical","Project","Quiz","Class Activities","Discussion Forums","Learning Quizzes",
+           "Programming Problems"]
+    for portion in thing:
+        points_obtained=0
+        points_possible=0
+        group1=0
+        for dictionary in submissions:
+            if dictionary['assignment']['group']['name'] ==portion:
+                if dictionary['score'] != None:
+                    points_obtained += dictionary['score'] * dictionary['assignment']['group']['group_weight']
+                    points_possible += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
+                        'group_weight']
+                    group1 = round((points_obtained / points_possible) * 100)
+        print("* "+portion+" : "+str(group1))
+
+
+
 def plot_scores(submissions:[dict]):
     points=0
     new_list=[]
@@ -134,7 +117,12 @@ def plot_scores(submissions:[dict]):
         if dictionary['score'] != None and dictionary['assignment']['points_possible']:
             points= round((dictionary['score']*100)/dictionary['assignment']['points_possible'],2)
             new_list.append(points)
-    print (new_list)
+    #print (new_list)
+    plt.hist(new_list)
+    plt.xlabel('Grades')
+    plt.ylabel('Number of Assignments')
+    plt.title('Distribution of Grades')
+    plt.show()
 
 
 
@@ -149,12 +137,13 @@ def plot_grade_trends(submissions:[dict]):
     list1=[]
     list2=[]
     list3=[]
+
     for dictionary in submissions:
         total_points += dictionary['assignment']['points_possible'] * dictionary['assignment']['group'][
             'group_weight']
         a_string_date=dictionary['assignment']['due_at']
         due_at= datetime.datetime.strptime(a_string_date, "%Y-%m-%dT%H:%M:%SZ")
-        empty_list.append(str(due_at))#might need to exclude str in actual graphing
+        empty_list.append(due_at)#might need to exclude str in actual graphing
     #for calculating the lists of scores, you are keeping a running total for the percentage of the grades so far
     #score*weight gives the numberator but you need total points from both graded and ungraded assignments
     for dictionary in submissions:
@@ -174,12 +163,19 @@ def plot_grade_trends(submissions:[dict]):
             points2_obtained+=0
             list1.append((round((points_obtained/total_points)*100,2)))
             list2.append(round((points2_obtained/total_points)*100,2))
+    plt.ylabel('Grade')
+    plt.title('Grade Trend')
+    #plt.xticks(np.arange(len(empty_list)),empty_list, rotation=90)
 
-
-
+    plt.plot(empty_list, list1, label="Highest")
+    plt.plot(empty_list, list2, label="Lowest")
+    plt.plot(empty_list, list3, label="Maximum")
+    plt.legend()
+    plt.show()
+    '''print(empty_list)
     print(list1)
     print(list2)
-    print(list3)
+    print(list3)'''
 
 
 
@@ -210,8 +206,8 @@ other list is made following dictionary format can be used in a function that ta
 # that your `test_my_solution.py` does not execute it.
 if __name__ == "__main__":
     main('hermione')
-    # main('ron')
-    # main('harry')
+    #main('ron')
+    #main('harry')
 
     # https://community.canvaslms.com/docs/DOC-10806-4214724194
     # main('YOUR OWN CANVAS TOKEN (You know, if you want)')
